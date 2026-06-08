@@ -19,8 +19,9 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
   const [newStatus, setNewStatus] = useState<Contact['status']>('allow');
   const [newCategory, setNewCategory] = useState<Contact['category']>('Family');
   const [showForm, setShowForm] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(50);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const PAGE_SIZE = 10;
 
   const toggleStatus = (id: string, current: Contact['status']) => {
     const sequence: Contact['status'][] = ['allow', 'screen', 'block'];
@@ -86,7 +87,12 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
     return matchesStatus && matchesSearch;
   });
 
-  const displayedContacts = filteredContacts.slice(0, visibleCount);
+  const totalPages = Math.max(1, Math.ceil(filteredContacts.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const displayedContacts = filteredContacts.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  const handleFilterChange = (val: typeof filter) => { setFilter(val); setCurrentPage(1); };
+  const handleSearchChange = (val: string) => { setSearchQuery(val); setCurrentPage(1); };
 
   // Get initials for circular avatar
   const getInitials = (name: string) => {
@@ -283,37 +289,31 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
         </form>
       )}
 
-      {/* SEARCH BAR */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-          <Search className="w-4 h-4 text-slate-400" />
+      {/* SEARCH + FILTER ROW */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="w-3.5 h-3.5 text-slate-400" />
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            placeholder={language === 'hi' ? 'नाम या नंबर...' : 'Search name or number...'}
+            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-7 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 font-semibold transition"
+          />
+          {searchQuery && (
+            <button type="button" onClick={() => handleSearchChange('')}
+              className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-500 hover:text-white text-xs transition">
+              ✕
+            </button>
+          )}
         </div>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={language === 'hi' ? 'नाम या नंबर से खोजें...' : 'Search by name or number...'}
-          className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 font-semibold transition"
-        />
-        {searchQuery && (
-          <button
-            type="button"
-            onClick={() => setSearchQuery('')}
-            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-white transition"
-          >
-            ✕
-          </button>
-        )}
-      </div>
-
-      {/* FILTER DROPDOWN */}
-      <div className="flex items-center gap-2">
-        <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest shrink-0">{t.filterRows}</span>
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value as typeof filter)}
-          className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold uppercase tracking-wider focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 cursor-pointer transition appearance-none"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '14px', paddingRight: '32px' }}
+          onChange={(e) => handleFilterChange(e.target.value as typeof filter)}
+          className="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2 text-xs text-white font-bold uppercase focus:outline-none focus:border-indigo-500 cursor-pointer transition appearance-none"
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 6px center', backgroundSize: '12px', paddingRight: '24px' }}
         >
           <option value="all">{t.allRows}</option>
           <option value="allow">{t.allowedTag}</option>
@@ -322,27 +322,25 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
         </select>
       </div>
 
-      {/* CONTACTS LIST BODY */}
-      <div className="space-y-1 overflow-y-auto max-h-[calc(100vh-340px)] min-h-[200px] pr-1">
+      {/* CONTACTS LIST — PAGINATED */}
+      <div className="space-y-1">
         {filteredContacts.length === 0 ? (
-          <div className="text-center py-10 bg-slate-955 bg-slate-950/40 border border-slate-805 border-slate-800 border-dashed rounded-2xl">
+          <div className="text-center py-10 bg-slate-950/40 border border-slate-800 border-dashed rounded-2xl">
             <p className="text-xs text-slate-400 font-semibold">{t.noContacts}</p>
           </div>
         ) : (
-          <>
-          {displayedContacts.map((c) => {
+          displayedContacts.map((c) => {
             const avatarStyle = getAvatarBg(c.category);
             return (
-              <div 
-                key={c.id} 
-                className="flex items-center justify-between bg-slate-950/40 px-2.5 py-2 rounded-xl border border-slate-800 hover:bg-indigo-950/10 hover:border-indigo-500/20 transition duration-200 group"
+              <div
+                key={c.id}
+                className="flex items-center justify-between bg-slate-950/40 px-2.5 py-2 rounded-xl border border-slate-800 hover:bg-indigo-950/10 hover:border-indigo-500/20 transition duration-200"
               >
-                {/* Left Side: Avatar + Names */}
+                {/* Left: Avatar + Info */}
                 <div className="flex items-center gap-2.5 min-w-0 pr-2">
                   <div className={`w-7 h-7 rounded-lg border flex items-center justify-center font-bold text-[9px] shrink-0 select-none ${avatarStyle}`}>
                     {getInitials(c.name)}
                   </div>
-                  
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[11px] font-bold text-white truncate max-w-[110px]">{c.name}</span>
@@ -354,59 +352,69 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
                   </div>
                 </div>
 
-                {/* Right Side: Active Filter Toggles */}
-                <div id={`contact-controls-${c.id}`} className="flex items-center gap-2.5 shrink-0">
-                  
-                  {/* Status Dropdown */}
+                {/* Right: Status + Delete */}
+                <div className="flex items-center gap-2 shrink-0">
                   <select
                     value={c.status}
                     onChange={(e) => {
-                      const newStatus = e.target.value as Contact['status'];
-                      const updated = contacts.map((x) => x.id === c.id ? { ...x, status: newStatus } : x);
-                      onUpdate(updated);
+                      const ns = e.target.value as Contact['status'];
+                      onUpdate(contacts.map((x) => x.id === c.id ? { ...x, status: ns } : x));
                     }}
-                    className={`rounded-xl text-[9.5px] tracking-wider font-mono font-bold transition cursor-pointer border appearance-none px-2.5 py-1.5 focus:outline-none ${
-                      c.status === 'allow'
-                        ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/25 focus:border-indigo-400'
-                        : c.status === 'screen'
-                          ? 'bg-amber-500/10 text-amber-300 border-amber-500/25 focus:border-amber-400'
-                          : 'bg-rose-500/10 text-rose-300 border-rose-500/25 focus:border-rose-400'
+                    className={`rounded-xl text-[9.5px] font-mono font-bold cursor-pointer border appearance-none px-2 py-1.5 focus:outline-none transition ${
+                      c.status === 'allow' ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/25'
+                      : c.status === 'screen' ? 'bg-amber-500/10 text-amber-300 border-amber-500/25'
+                      : 'bg-rose-500/10 text-rose-300 border-rose-500/25'
                     }`}
                     style={{ backgroundImage: 'none' }}
                   >
-                    <option value="allow" className="bg-slate-900 text-indigo-300">{t.allowedTag}</option>
-                    <option value="screen" className="bg-slate-900 text-amber-300">{t.screenTag}</option>
-                    <option value="block" className="bg-slate-900 text-rose-300">{t.blockedTag}</option>
+                    <option value="allow">{t.allowedTag}</option>
+                    <option value="screen">{t.screenTag}</option>
+                    <option value="block">{t.blockedTag}</option>
                   </select>
-
-                  {/* Elegant Delete and trash button */}
                   <button
                     type="button"
                     onClick={() => handleDeleteContact(c.id)}
-                    className="text-slate-500 hover:text-rose-400 p-2 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition duration-150"
-                    title={t.deleteRuleTitle}
+                    className="text-slate-600 hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-900 transition"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-3 h-3" />
                   </button>
                 </div>
               </div>
             );
-          })}
-
-          {visibleCount < filteredContacts.length && (
-            <div className="flex justify-center pt-2 pb-1">
-              <button
-                type="button"
-                onClick={() => setVisibleCount(prev => prev + 50)}
-                className="text-[10px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 px-4 py-2 rounded-xl transition border border-indigo-500/30 cursor-pointer"
-              >
-                {language === 'hi' ? 'और दिखाएं' : 'Load More'} ({filteredContacts.length - visibleCount} {language === 'hi' ? 'बाकी' : 'remaining'})
-              </button>
-            </div>
-          )}
-          </>
+          })
         )}
       </div>
+
+      {/* PAGINATION CONTROLS */}
+      {filteredContacts.length > 0 && (
+        <div className="flex items-center justify-between pt-1 border-t border-slate-800/60">
+          <span className="text-[10px] text-slate-500 font-mono">
+            {language === 'hi'
+              ? `${(safePage - 1) * PAGE_SIZE + 1}–${Math.min(safePage * PAGE_SIZE, filteredContacts.length)} / ${filteredContacts.length}`
+              : `${(safePage - 1) * PAGE_SIZE + 1}–${Math.min(safePage * PAGE_SIZE, filteredContacts.length)} of ${filteredContacts.length}`
+            }
+          </span>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              disabled={safePage <= 1}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              ‹ {language === 'hi' ? 'पिछला' : 'Prev'}
+            </button>
+            <span className="px-2 text-[10px] font-bold text-slate-400">{safePage}/{totalPages}</span>
+            <button
+              type="button"
+              disabled={safePage >= totalPages}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              {language === 'hi' ? 'अगला' : 'Next'} ›
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );

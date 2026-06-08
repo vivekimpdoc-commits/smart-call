@@ -33,11 +33,26 @@ const DEFAULT_CONFIG: AppConfig = {
 };
 
 const DEFAULT_CONTACTS: Contact[] = [
-  { id: 'c1', name: 'Mom ❤️', phoneNumber: '+1 (555) 123-4567', status: 'allow', category: 'Family' },
-  { id: 'c2', name: 'Sarah (Office boss)', phoneNumber: '+1 (555) 987-6543', status: 'allow', category: 'Work' },
-  { id: 'c10', name: 'Dr. Marcus (Dentist)', phoneNumber: '+1 (555) 441-2090', status: 'allow', category: 'Work' },
-  { id: 'c4', name: 'David (Delivery)', phoneNumber: '+1 (555) 777-8899', status: 'screen', category: 'Friends' },
-  { id: 'c5', name: 'Potential Robocaller', phoneNumber: '+1 (800) 555-0199', status: 'block', category: 'Spam' },
+  { id: 'c1',  name: 'Mom ❤️',                  phoneNumber: '+1 (555) 123-4567', status: 'allow',  category: 'Family'    },
+  { id: 'c2',  name: 'Dad 👨',                   phoneNumber: '+1 (555) 234-5678', status: 'allow',  category: 'Family'    },
+  { id: 'c3',  name: 'Sister Priya',             phoneNumber: '+1 (555) 345-6789', status: 'allow',  category: 'Family'    },
+  { id: 'c4',  name: 'Sarah (Office Boss)',       phoneNumber: '+1 (555) 987-6543', status: 'allow',  category: 'Work'      },
+  { id: 'c5',  name: 'Rahul (Colleague)',         phoneNumber: '+1 (555) 456-7890', status: 'allow',  category: 'Work'      },
+  { id: 'c6',  name: 'Anita (HR Manager)',        phoneNumber: '+1 (555) 567-8901', status: 'screen', category: 'Work'      },
+  { id: 'c7',  name: 'Dr. Marcus (Dentist)',      phoneNumber: '+1 (555) 441-2090', status: 'allow',  category: 'Doctors'   },
+  { id: 'c8',  name: 'Dr. Sharma (GP)',           phoneNumber: '+1 (555) 678-9012', status: 'allow',  category: 'Doctors'   },
+  { id: 'c9',  name: 'Amit (Best Friend)',        phoneNumber: '+1 (555) 789-0123', status: 'allow',  category: 'Friends'   },
+  { id: 'c10', name: 'Neha (College Friend)',     phoneNumber: '+1 (555) 890-1234', status: 'allow',  category: 'Friends'   },
+  { id: 'c11', name: 'Vijay (Neighbor)',          phoneNumber: '+1 (555) 901-2345', status: 'screen', category: 'Friends'   },
+  { id: 'c12', name: 'Fire & Rescue 🚒',          phoneNumber: '+1 (911) 000-0001', status: 'allow',  category: 'Emergency' },
+  { id: 'c13', name: 'Ambulance 🚑',              phoneNumber: '+1 (911) 000-0002', status: 'allow',  category: 'Emergency' },
+  { id: 'c14', name: 'Amazon Delivery',           phoneNumber: '+1 (888) 280-4331', status: 'screen', category: 'Delivery'  },
+  { id: 'c15', name: 'Swiggy Rider',              phoneNumber: '+1 (555) 321-9988', status: 'screen', category: 'Delivery'  },
+  { id: 'c16', name: 'Potential Robocaller',      phoneNumber: '+1 (800) 555-0199', status: 'block',  category: 'Spam'      },
+  { id: 'c17', name: 'Insurance Spam Call',       phoneNumber: '+1 (800) 444-5555', status: 'block',  category: 'Spam'      },
+  { id: 'c18', name: 'Credit Card Scam',          phoneNumber: '+1 (900) 123-4567', status: 'block',  category: 'Spam'      },
+  { id: 'c19', name: 'Unknown Telemarketer',      phoneNumber: '+1 (877) 999-0000', status: 'block',  category: 'Spam'      },
+  { id: 'c20', name: 'Ravi (School Friend)',      phoneNumber: '+1 (555) 654-3210', status: 'screen', category: 'Friends'   },
 ];
 
 const PREPOPULATED_LOGS: LogEntry[] = [
