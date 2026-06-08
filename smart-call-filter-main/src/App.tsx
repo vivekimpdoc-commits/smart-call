@@ -55,38 +55,7 @@ const DEFAULT_CONTACTS: Contact[] = [
   { id: 'c20', name: 'Ravi (School Friend)',      phoneNumber: '+1 (555) 654-3210', status: 'screen', category: 'Friends'   },
 ];
 
-const PREPOPULATED_LOGS: LogEntry[] = [
-  {
-    id: 'log_p1',
-    timestamp: '11:42:01 PM',
-    name: 'Potential Robocaller',
-    phoneNumber: '+1 (800) 555-0199',
-    decision: 'BLOCKED',
-    reason: 'Number registered on strict Blocklist database',
-    transcript: 'Hello, calling to offer an interest rate reduction on your outstanding credit card balance...',
-    smsSent: false
-  },
-  {
-    id: 'log_p2',
-    timestamp: '09:12:35 AM',
-    name: 'Mom ❤️',
-    phoneNumber: '+1 (555) 123-4567',
-    decision: 'ALLOWED',
-    reason: 'Caller on local Allowlist matches',
-    smsSent: false
-  },
-  {
-    id: 'log_p5',
-    timestamp: '02:15:10 AM',
-    name: 'Unknown Stranger',
-    phoneNumber: '+1 (555) 304-9423',
-    decision: 'SCREENED',
-    reason: 'Fails call filter rules outside authorized daily window (Active quiet time: 22:00 - 08:00)',
-    transcript: 'Hello? Is this Rachel? I need to leave a message regarding the delivery scheduled for tomorrow...',
-    smsSent: true,
-    smsText: 'Call Filter Alert: I am busy right now. If this is an urgent emergency, call me back immediately.'
-  }
-];
+const PREPOPULATED_LOGS: LogEntry[] = [];
 
 export default function App() {
   const [language, setLanguage] = useState<'en' | 'hi'>(() => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Trash2, Plus, Search, ShieldCheck } from 'lucide-react';
+import { Users, Trash2, Plus, Search } from 'lucide-react';
 import { Contact } from '../types';
 import { translations } from '../translations';
 
@@ -21,7 +21,7 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
   const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 4;
 
   const toggleStatus = (id: string, current: Contact['status']) => {
     const sequence: Contact['status'][] = ['allow', 'screen', 'block'];
@@ -65,17 +65,6 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
     onUpdate(contacts.filter((c) => c.id !== id));
   };
 
-  const handleGenerateMockData = () => {
-    const newContacts: Contact[] = Array.from({ length: 2000 }).map((_, i) => ({
-      id: 'gen_' + Date.now() + '_' + i,
-      name: `Mock User ${i + 1}`,
-      phoneNumber: `+1 (555) ${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
-      status: ['allow', 'screen', 'block'][Math.floor(Math.random() * 3)] as Contact['status'],
-      category: ['Family', 'Work', 'Friends', 'Spam', 'Unknown'][Math.floor(Math.random() * 5)] as Contact['category'],
-    }));
-    onUpdate([...newContacts, ...contacts]);
-    alert(language === 'hi' ? '2000 मॉक नंबर जोड़े गए!' : '2000 mock numbers added!');
-  };
 
   const filteredContacts = contacts.filter((c) => {
     const matchesStatus = filter === 'all' || c.status === filter;
@@ -149,22 +138,14 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
             <p className="text-[10px] text-slate-400 mt-0.5 leading-none">{t.addressBookDesc}</p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={handleGenerateMockData}
-            className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider px-3 py-2.5 rounded-xl transition duration-200 cursor-pointer shadow-md border bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white"
-            title="Generate 2000 numbers for testing"
-          >
-            {language === 'hi' ? '+2000 मॉक जोड़ें' : '+2000 Mock'}
-          </button>
+        <div>
           <button
             type="button"
             onClick={() => setShowForm(!showForm)}
             className={`flex items-center gap-1.5 text-[10px] font-bold tracking-wider px-4 py-2.5 rounded-xl transition duration-200 cursor-pointer shadow-md border ${
               showForm 
                 ? 'bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20' 
-                : 'bg-indigo-600 hover:bg-indigo-500 text-white border-indigo-700 hover:shadow shadow-indigo-505 shadow-indigo-500/10'
+                : 'bg-indigo-600 hover:bg-indigo-500 text-white border-indigo-700 hover:shadow shadow-indigo-500/10'
             }`}
           >
             {showForm ? t.cancelBtn : t.addContactBtn}
