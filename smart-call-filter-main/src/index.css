@@ -49,3 +49,24 @@
   background: rgba(148, 163, 184, 0.5);
 }
 
+/* Ensure native select controls and dropdown menus use dark mode styling */
+:root {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: #0f172a !important; /* Slate-900 background for dropdown options */
+  color: #f1f5f9 !important; /* Slate-100 text color for high contrast */
+}
+
+/* Custom styling for status-specific options in dropdown menus */
+select option[value="allow"] {
+  color: #a5b4fc !important; /* Indigo-300 */
+}
+select option[value="screen"] {
+  color: #fcd34d !important; /* Amber-300 */
+}
+select option[value="block"] {
+  color: #fca5a5 !important; /* Rose-300 */
+}
+
