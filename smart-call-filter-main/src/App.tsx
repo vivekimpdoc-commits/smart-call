@@ -140,7 +140,7 @@ export default function App() {
     return PREPOPULATED_LOGS;
   });
 
-  const [activeTab, setActiveTab] = useState<'home' | 'contacts' | 'simulator'>('contacts');
+  const [activeTab, setActiveTab] = useState<'home' | 'contacts' | 'simulator'>('home');
   const [currentTime, setCurrentTime] = useState<string>('');
 
   // Sync state with localstorage
@@ -355,18 +355,22 @@ export default function App() {
       {/* BOTTOM NAVIGATION BAR */}
       <nav className="absolute bottom-0 inset-x-0 h-16 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 z-50 rounded-b-[3rem] px-6">
         <div className="flex justify-between items-center h-full max-w-sm mx-auto">
-          <button onClick={() => setActiveTab('contacts')} className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${activeTab === 'contacts' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>
-            <Users className="w-5 h-5" />
-            <span className="text-[8px] font-bold tracking-wider uppercase">Allow</span>
+          <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${activeTab === 'home' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>
+            <ShieldCheck className={`w-5 h-5 transition-transform duration-300 ${activeTab === 'home' ? 'scale-110' : ''}`} />
+            <span className="text-[8px] font-bold tracking-wider uppercase">
+              {language === 'hi' ? 'कवच' : 'Shield'}
+            </span>
           </button>
 
-          <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${activeTab === 'home' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>
-            <Settings className={`w-5 h-5 ${activeTab === 'home' ? 'rotate-45' : ''} transition-transform`} />
-            <span className="text-[8px] font-bold tracking-wider uppercase">Rules</span>
+          <button onClick={() => setActiveTab('contacts')} className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${activeTab === 'contacts' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>
+            <Users className={`w-5 h-5 transition-transform duration-300 ${activeTab === 'contacts' ? 'scale-110' : ''}`} />
+            <span className="text-[8px] font-bold tracking-wider uppercase">
+              {language === 'hi' ? 'सुरक्षित सूची' : 'Allow List'}
+            </span>
           </button>
           
           <button onClick={() => setActiveTab('simulator')} className={`flex flex-col items-center justify-center w-20 gap-1 transition-colors ${activeTab === 'simulator' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>
-            <div className={`p-1.5 rounded-full ${activeTab === 'simulator' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
+            <div className={`p-1.5 rounded-full transition-all duration-300 ${activeTab === 'simulator' ? 'bg-indigo-600 text-white scale-105' : 'bg-slate-800 text-slate-400'}`}>
               <Smartphone className="w-4 h-4" />
             </div>
             <span className="text-[8px] font-bold tracking-wider uppercase">
