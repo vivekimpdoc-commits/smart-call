@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/smart-call-filter/',
+    base: '/smart-call/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
