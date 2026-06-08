@@ -130,7 +130,7 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
   };
 
   return (
-    <div id="contacts-manager-container" className="bg-slate-900/95 backdrop-blur-md border border-slate-800/85 rounded-3xl p-6 space-y-5 shadow-2xl shadow-indigo-950/20 text-white transition-all duration-300">
+    <div id="contacts-manager-container" className="bg-slate-900/95 backdrop-blur-md border border-slate-800/85 rounded-3xl p-4 space-y-3 shadow-2xl shadow-indigo-950/20 text-white transition-all duration-300">
       
       {/* Header and Toggle Add Action */}
       <div className="flex justify-between items-center pb-3 border-b border-slate-800/80">
@@ -323,7 +323,7 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
       </div>
 
       {/* CONTACTS LIST BODY */}
-      <div className="space-y-2 overflow-y-auto max-h-[350px] pr-1">
+      <div className="space-y-1 overflow-y-auto max-h-[calc(100vh-340px)] min-h-[200px] pr-1">
         {filteredContacts.length === 0 ? (
           <div className="text-center py-10 bg-slate-955 bg-slate-950/40 border border-slate-805 border-slate-800 border-dashed rounded-2xl">
             <p className="text-xs text-slate-400 font-semibold">{t.noContacts}</p>
@@ -335,50 +335,49 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
             return (
               <div 
                 key={c.id} 
-                className="flex items-center justify-between bg-slate-950/40 p-3 rounded-2xl border border-slate-800 hover:bg-indigo-950/10 hover:border-indigo-500/20 hover:shadow-md transition duration-200 group"
+                className="flex items-center justify-between bg-slate-950/40 px-2.5 py-2 rounded-xl border border-slate-800 hover:bg-indigo-950/10 hover:border-indigo-500/20 transition duration-200 group"
               >
                 {/* Left Side: Avatar + Names */}
-                <div className="flex items-center gap-3.5 min-w-0 pr-2">
-                  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center font-bold text-xs shrink-0 select-none ${avatarStyle}`}>
+                <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                  <div className={`w-7 h-7 rounded-lg border flex items-center justify-center font-bold text-[9px] shrink-0 select-none ${avatarStyle}`}>
                     {getInitials(c.name)}
                   </div>
                   
-                  <div className="space-y-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold text-white truncate max-w-[120px] sm:max-w-[180px]">{c.name}</span>
-                      <span className="text-[8px] bg-slate-900 border border-slate-805 text-slate-300 px-1.5 py-0.5 rounded-md font-extrabold uppercase tracking-widest">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-bold text-white truncate max-w-[110px]">{c.name}</span>
+                      <span className="text-[7px] bg-slate-900 border border-slate-700 text-slate-400 px-1 py-0.5 rounded font-bold uppercase tracking-wide shrink-0">
                         {translateCategory(c.category)}
                       </span>
                     </div>
-                    <span className="text-[10.5px] font-mono text-slate-405 text-slate-400 block font-medium">{c.phoneNumber}</span>
+                    <span className="text-[9.5px] font-mono text-slate-500 leading-none">{c.phoneNumber}</span>
                   </div>
                 </div>
 
                 {/* Right Side: Active Filter Toggles */}
                 <div id={`contact-controls-${c.id}`} className="flex items-center gap-2.5 shrink-0">
                   
-                  {/* Status Toggle Button Tag */}
-                  <button
-                    type="button"
-                    onClick={() => toggleStatus(c.id, c.status)}
-                    className={`px-3 py-1.5 rounded-xl text-[9.5px] tracking-wider font-mono font-bold transition cursor-pointer border flex items-center gap-1.5 select-none ${
+                  {/* Status Dropdown */}
+                  <select
+                    value={c.status}
+                    onChange={(e) => {
+                      const newStatus = e.target.value as Contact['status'];
+                      const updated = contacts.map((x) => x.id === c.id ? { ...x, status: newStatus } : x);
+                      onUpdate(updated);
+                    }}
+                    className={`rounded-xl text-[9.5px] tracking-wider font-mono font-bold transition cursor-pointer border appearance-none px-2.5 py-1.5 focus:outline-none ${
                       c.status === 'allow'
-                        ? 'bg-indigo-500/10 text-indigo-305 text-indigo-300 border-indigo-500/25 hover:bg-indigo-500/20'
+                        ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/25 focus:border-indigo-400'
                         : c.status === 'screen'
-                          ? 'bg-amber-500/10 text-amber-305 text-amber-300 border-amber-500/25 hover:bg-amber-500/20'
-                          : 'bg-rose-500/10 text-rose-305 text-rose-300 border-rose-500/25 hover:bg-rose-500/20'
+                          ? 'bg-amber-500/10 text-amber-300 border-amber-500/25 focus:border-amber-400'
+                          : 'bg-rose-500/10 text-rose-300 border-rose-500/25 focus:border-rose-400'
                     }`}
-                    title={t.contactsTip}
+                    style={{ backgroundImage: 'none' }}
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      c.status === 'allow'
-                        ? 'bg-indigo-400'
-                        : c.status === 'screen'
-                          ? 'bg-amber-400 animate-pulse'
-                          : 'bg-rose-400'
-                    }`} />
-                    <span>{c.status === 'allow' ? t.allowedTag : c.status === 'screen' ? t.screenTag : t.blockedTag}</span>
-                  </button>
+                    <option value="allow" className="bg-slate-900 text-indigo-300">{t.allowedTag}</option>
+                    <option value="screen" className="bg-slate-900 text-amber-300">{t.screenTag}</option>
+                    <option value="block" className="bg-slate-900 text-rose-300">{t.blockedTag}</option>
+                  </select>
 
                   {/* Elegant Delete and trash button */}
                   <button
@@ -409,13 +408,6 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
         )}
       </div>
 
-      {/* Tutorial segment */}
-      <div className="border border-slate-800 bg-slate-950/40 p-3.5 rounded-2xl text-[10.5px] text-slate-400 leading-normal flex gap-2.5">
-        <span className="text-indigo-400 font-bold font-mono">💡</span>
-        <p className="text-slate-350">
-          {t.contactsTip}
-        </p>
-      </div>
     </div>
   );
 }
