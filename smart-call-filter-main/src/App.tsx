@@ -140,7 +140,7 @@ export default function App() {
     return PREPOPULATED_LOGS;
   });
 
-  const [activeTab, setActiveTab] = useState<'home' | 'contacts' | 'simulator'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'contacts' | 'simulator'>('contacts');
   const [currentTime, setCurrentTime] = useState<string>('');
 
   // Sync state with localstorage
@@ -205,7 +205,31 @@ export default function App() {
   };
 
   const handleAddSampleLogs = () => {
-    setLogs((prev) => [...PREPOPULATED_LOGS, ...prev]);
+    const decisions: Array<'ALLOWED' | 'SCREENED' | 'BLOCKED'> = ['ALLOWED', 'SCREENED', 'BLOCKED'];
+    const names = ['Mom ❤️', 'Potential Robocaller', 'Unknown Stranger', 'Dr. Sharma', 'Rahul Kumar', 'Priya Verma', 'Insurance Spam', 'Amazon Delivery'];
+    const phones = ['+1 (555) 123-4567', '+1 (800) 555-0199', '+1 (555) 304-9423', '+1 (555) 678-9012', '+1 (555) 456-7890', '+1 (555) 567-8901', '+1 (800) 444-5555', '+1 (888) 280-4331'];
+    const reasons = [
+      'Caller on local Allowlist matches',
+      'Number found in spam database',
+      'Unknown caller outside authorized hours',
+      'Blocked by user rule',
+      'Repeated call — emergency bypass granted',
+    ];
+    const mockLogs: LogEntry[] = Array.from({ length: 12 }).map((_, i) => {
+      const decision = decisions[i % 3];
+      const now = new Date(Date.now() - i * 5 * 60000);
+      return {
+        id: 'sample_' + Date.now() + '_' + i,
+        timestamp: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        name: names[i % names.length],
+        phoneNumber: phones[i % phones.length],
+        decision,
+        reason: reasons[i % reasons.length],
+        smsSent: decision === 'SCREENED',
+        smsText: decision === 'SCREENED' ? 'I am busy right now. Will call back soon.' : undefined,
+      };
+    });
+    setLogs((prev) => [...mockLogs, ...prev]);
   };
 
   // State Counts for ShieldStatus display
@@ -331,14 +355,14 @@ export default function App() {
       {/* BOTTOM NAVIGATION BAR */}
       <nav className="absolute bottom-0 inset-x-0 h-16 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 z-50 rounded-b-[3rem] px-6">
         <div className="flex justify-between items-center h-full max-w-sm mx-auto">
-          <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${activeTab === 'home' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>
-            <Settings className={`w-5 h-5 ${activeTab === 'home' ? 'rotate-45' : ''} transition-transform`} />
-            <span className="text-[8px] font-bold tracking-wider uppercase">Rules</span>
-          </button>
-          
           <button onClick={() => setActiveTab('contacts')} className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${activeTab === 'contacts' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>
             <Users className="w-5 h-5" />
             <span className="text-[8px] font-bold tracking-wider uppercase">Allow</span>
+          </button>
+
+          <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${activeTab === 'home' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>
+            <Settings className={`w-5 h-5 ${activeTab === 'home' ? 'rotate-45' : ''} transition-transform`} />
+            <span className="text-[8px] font-bold tracking-wider uppercase">Rules</span>
           </button>
           
           <button onClick={() => setActiveTab('simulator')} className={`flex flex-col items-center justify-center w-20 gap-1 transition-colors ${activeTab === 'simulator' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}>

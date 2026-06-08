@@ -76,7 +76,7 @@ export default function LogsTable({ logs, onClear, onLoadMock, language }: LogsT
             {language === 'hi' ? 'कॉल लॉग्स' : 'Call Logs'}
           </span>
           <span className="text-[9px] text-slate-500 font-mono bg-slate-800 px-1.5 py-0.5 rounded-md">
-            {logs.length}
+            {filterDecision !== 'all' ? `${filtered.length}/${logs.length}` : logs.length}
           </span>
         </div>
 

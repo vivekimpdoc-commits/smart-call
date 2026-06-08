@@ -154,116 +154,60 @@ export default function ContactsManager({ contacts, onUpdate, language }: Contac
         </div>
       </div>
 
-      {/* FORM: REGISTER NEW CONTACT (Styled after the uploaded user design reference) */}
+      {/* SIMPLE ADD FORM */}
       {showForm && (
-        <form onSubmit={handleAddContact} className="bg-slate-950 border border-slate-800 p-5 rounded-3xl space-y-4 animate-fade-in relative z-20 shadow-2xl text-left">
-          <div className="flex flex-col gap-1">
-            <h4 className="text-[14px] font-black text-white leading-tight">{language === 'hi' ? 'संपर्क चुनें (Pick contacts)' : 'Pick contacts'}</h4>
-            <p className="text-[11px] text-slate-400 font-semibold">{language === 'hi' ? 'उन लोगों को चुनें जो हमेशा आपसे संपर्क कर सकते हैं।' : 'Select people who can always reach you.'}</p>
+        <form onSubmit={handleAddContact} className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3 animate-fade-in">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              required
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder={language === 'hi' ? 'नाम' : 'Name'}
+              className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none font-semibold transition"
+            />
+            <input
+              type="tel"
+              required
+              value={newPhone}
+              onChange={(e) => setNewPhone(e.target.value)}
+              placeholder={language === 'hi' ? 'नंबर' : 'Phone'}
+              className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none font-mono font-semibold transition"
+            />
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">{t.fullName}</label>
-              <input 
-                type="text"
-                required
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                placeholder="e.g. Rachel Green"
-                className="w-full bg-slate-905 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/20 font-semibold transition text-xs"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">{t.phoneNo}</label>
-              <input 
-                type="tel"
-                required
-                value={newPhone}
-                onChange={(e) => setNewPhone(e.target.value)}
-                placeholder="e.g. +1 (555) 304-9423"
-                className="w-full bg-slate-905 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-mono focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/20 font-semibold transition text-xs"
-              />
-            </div>
-          </div>
-
-          {/* LABEL SELECTION CHIPS */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block font-sans">LABEL</label>
-            <div className="flex flex-wrap gap-2">
-              {(['Family', 'Work', 'Emergency', 'Doctors', 'School', 'Delivery', 'Custom'] as const).map((cat) => {
-                const isSelected = newCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => setNewCategory(cat)}
-                    className={`px-4.5 py-2.5 rounded-full text-[11px] font-bold transition duration-150 cursor-pointer ${
-                      isSelected
-                        ? 'bg-white text-slate-950 font-black shadow-md shadow-white/5 scale-[1.02]'
-                        : 'bg-slate-800/80 text-slate-305 text-slate-300 hover:bg-slate-700 border border-slate-700/30'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ACCESS RULE BEHAVIOR SELECTION BUTTONS */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block font-sans">BEHAVIOR</label>
-            <div className="flex flex-wrap gap-2.5">
-              <button
-                type="button"
-                onClick={() => setNewStatus('allow')}
-                className={`px-5 py-3 rounded-full text-[11px] font-bold transition cursor-pointer select-none border-2 font-sans ${
-                  newStatus === 'allow'
-                    ? 'border-emerald-500/80 bg-emerald-500/10 text-emerald-400 shadow shadow-emerald-500/10'
-                    : 'border-slate-805 border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-250 hover:border-slate-700'
-                }`}
-              >
-                Always allow
-              </button>
-              <button
-                type="button"
-                onClick={() => setNewStatus('screen')}
-                className={`px-5 py-3 rounded-full text-[11px] font-bold transition cursor-pointer select-none border-2 font-sans ${
-                  newStatus === 'screen'
-                    ? 'border-emerald-500/80 bg-emerald-500/10 text-emerald-400 shadow shadow-emerald-500/10'
-                    : 'border-slate-805 border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-250 hover:border-slate-700'
-                }`}
-              >
-                Whitelist only (Screen)
-              </button>
-              <button
-                type="button"
-                onClick={() => setNewStatus('block')}
-                className={`px-5 py-3 rounded-full text-[11px] font-bold transition cursor-pointer select-none border-2 font-sans ${
-                  newStatus === 'block'
-                    ? 'border-rose-500/80 bg-rose-500/10 text-rose-455 text-rose-400 shadow shadow-rose-500/10'
-                    : 'border-slate-805 border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-250 hover:border-slate-700'
-                }`}
-              >
-                Always Block
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2.5 border-t border-slate-850">
-            <button
-              type="button"
-              onClick={() => setShowForm(false)}
-              className="text-xs text-slate-400 hover:text-white px-3.5 py-1.5 rounded-lg transition font-semibold"
+          <div className="flex gap-2">
+            <select
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value as Contact['status'])}
+              className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-indigo-500 cursor-pointer appearance-none"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center', backgroundSize: '12px', paddingRight: '28px' }}
             >
-              Cancel
+              <option value="allow">{t.allowedTag}</option>
+              <option value="screen">{t.screenTag}</option>
+              <option value="block">{t.blockedTag}</option>
+            </select>
+            <select
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value as Contact['category'])}
+              className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-indigo-500 cursor-pointer appearance-none"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center', backgroundSize: '12px', paddingRight: '28px' }}
+            >
+              <option value="Family">{language === 'hi' ? 'परिवार' : 'Family'}</option>
+              <option value="Work">{language === 'hi' ? 'काम' : 'Work'}</option>
+              <option value="Friends">{language === 'hi' ? 'दोस्त' : 'Friends'}</option>
+              <option value="Doctors">{language === 'hi' ? 'डॉक्टर' : 'Doctors'}</option>
+              <option value="Emergency">{language === 'hi' ? 'आपातकाल' : 'Emergency'}</option>
+              <option value="Delivery">{language === 'hi' ? 'डिलीवरी' : 'Delivery'}</option>
+              <option value="Unknown">{language === 'hi' ? 'अज्ञात' : 'Unknown'}</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-2">
+            <button type="button" onClick={() => setShowForm(false)}
+              className="text-xs text-slate-500 hover:text-white px-3 py-1.5 rounded-lg transition font-semibold cursor-pointer">
+              {t.cancelBtn}
             </button>
-            <button
-              type="submit"
-              className="text-xs font-black tracking-wide bg-indigo-600 hover:bg-indigo-550 hover:shadow shadow-indigo-500/20 text-white px-5 py-2.5 rounded-xl transition cursor-pointer border border-indigo-700"
-            >
+            <button type="submit"
+              className="text-xs font-black bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl transition cursor-pointer border border-indigo-700">
               {t.saveRule}
             </button>
           </div>
